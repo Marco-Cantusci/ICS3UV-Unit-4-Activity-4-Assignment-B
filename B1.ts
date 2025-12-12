@@ -10,12 +10,16 @@ let odometer: number = 65000.0; // mileage of Car
 let oilChangeKM: number = 65000.0; // value since the last oil change
 let carColor: string = "Black"; // color of Car
 const carModel: string = "Honda Civic"; // model of Car
-let newMileage: number = 0.0; // new mileage amount
 const gasCost: number[] = new Array(10); // cost of gas per fill up.
 let gasIndex: number = 0;
 
 // carsStats function(2)
-function carStats(carModel: string, carColor: string, odometer: number, oilChangeKM: number): string {
+function carStats(
+  carModel: string,
+  carColor: string,
+  odometer: number,
+  oilChangeKM: number,
+): string {
   let stats = "";
   stats += `\nCar Model: ${carModel}`;
   stats += `\nCar Colour: ${carColor}`;
@@ -32,9 +36,8 @@ function wrapCar(): string {
 }
 
 // drive function(4)
-function drive(odometer: number, newMileage: number) {
+function drive() {
   const randomKM = Math.floor(Math.random() * (1000 - 100 + 1) + 100);
-  newMileage = odometer + randomKM;
   return randomKM;
 }
 
@@ -97,7 +100,7 @@ console.log("Initial Car Stats");
 console.log(carStats(carModel, carColor, odometer, oilChangeKM));
 
 // print drive function
-const driven: number = drive(odometer, newMileage);
+const driven: number = drive();
 console.log(`You drove ${driven} km`);
 odometer += driven;
 
@@ -115,7 +118,9 @@ carColor = wrapCar();
 gasIndex = fillUp(gasCost, gasIndex);
 
 // print gas costs/average
-console.log(`\nAverage cost to fill up gas: $${displayCostToFillUp(gasCost, gasIndex)}`);
+console.log(
+  `\nAverage cost to fill up gas: $${displayCostToFillUp(gasCost, gasIndex)}`,
+);
 
 // print updated car stats
 console.log("\n", carStats(carModel, carColor, odometer, oilChangeKM));
