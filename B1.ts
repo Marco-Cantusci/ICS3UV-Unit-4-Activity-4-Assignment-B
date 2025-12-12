@@ -15,8 +15,8 @@ const gasCost: number[] = new Array(10); // cost of gas per fill up.
 let gasIndex: number = 0;
 
 // carsStats function(2)
-function carStats(): string {
-  let stats: string = "";
+function carStats(carModel: string, carColor: string, odometer: number, oilChangeKM: number): string {
+  let stats = "";
   stats += `\nCar Model: ${carModel}`;
   stats += `\nCar Colour: ${carColor}`;
   stats += `\nOdometer: ${odometer}`;
@@ -26,22 +26,21 @@ function carStats(): string {
 
 // wrapCar function(3)
 function wrapCar(): string {
-  const newColor: string = prompt("Enter a new color to wrap your car: ") ||
+  const newColor = prompt("Enter a new color to wrap your car: ") ||
     ("\n");
   return newColor;
 }
 
 // drive function(4)
-function drive(): number {
-  const randomKM: number = Math.floor(Math.random() * (1000 - 100 + 1) + 100);
+function drive(odometer: number, newMileage: number) {
+  const randomKM = Math.floor(Math.random() * (1000 - 100 + 1) + 100);
   newMileage = odometer + randomKM;
   return randomKM;
 }
 
 // fillUp function(5)
-function fillUp(): void {
+function fillUp(gasCost: number[], gasIndex: number) {
   let loop: string = "yes";
-
   while (loop.toLowerCase() == "yes") {
     let priceString: string =
       prompt(`Cost to fill up gas ${gasIndex + 1}: $`) || "0";
@@ -62,12 +61,14 @@ function fillUp(): void {
       loop = prompt("Invalid input. Please enter 'yes' or 'no':") || ("no");
     }
   }
+
+  return gasIndex;
 }
 
 // displayCostToFillUp function(6)
-function displayCostToFillUp(): number {
-  let total: number = 0;
+function displayCostToFillUp(gasCost: number[], gasIndex: number): number {
   let counting: number = 0;
+  let total: number = 0;
 
   for (let counter = 0; counter < gasIndex; counter++) {
     console.log("\n");
@@ -93,11 +94,12 @@ function oilChange(mileage: number, oilChangeKM: number): boolean {
 // output
 // print carStats
 console.log("Initial Car Stats");
-console.log(carStats());
+console.log(carStats(carModel, carColor, odometer, oilChangeKM));
 
 // print drive function
-console.log(`You drove ${drive()} km`);
-odometer = newMileage;
+const driven: number = drive(odometer, newMileage);
+console.log(`You drove ${driven} km`);
+odometer += driven;
 
 // print oilChange function
 if (oilChange(odometer, oilChangeKM)) {
@@ -110,12 +112,12 @@ if (oilChange(odometer, oilChangeKM)) {
 carColor = wrapCar();
 
 // print fillUp function
-fillUp();
+gasIndex = fillUp(gasCost, gasIndex);
 
 // print gas costs/average
-console.log(`\nAverage cost to fill up gas: $${displayCostToFillUp()}`);
+console.log(`\nAverage cost to fill up gas: $${displayCostToFillUp(gasCost, gasIndex)}`);
 
 // print updated car stats
-console.log("\n", carStats());
+console.log("\n", carStats(carModel, carColor, odometer, oilChangeKM));
 
 console.log("\nDone.");

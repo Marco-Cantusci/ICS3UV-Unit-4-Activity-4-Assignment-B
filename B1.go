@@ -22,14 +22,13 @@ var odometer float64 = 65000.0        // mileage of Car
 var oilChangeKM float64 = 65000.0     // value since the last oil change
 var carColor string = "Black"         // color of Car
 const carModel string = "Honda Civic" // model of Car
-var newMileage float64 = 0.0          // new mileage amount
 var gasCost [10]float64               // cost of gas per fill up.
 var gasIndex int = 0
 
 var reader = bufio.NewReader(os.Stdin)
 
 // carsStats function(2)
-func carStats() string {
+func carStats(carModel string, carColor string, odometer float64, oilChangeKM float64) string {
 	var stats string = ""
 	stats += fmt.Sprintf("\nCar Model: %s", carModel)
 	stats += fmt.Sprintf("\nCar Colour: %s", carColor)
@@ -54,12 +53,11 @@ func wrapCar() string {
 func drive() float64 {
 	var randomKM float64 = rand.Float64()
 	randomKM = math.Floor(randomKM*901) + 100
-	newMileage = odometer + randomKM
 	return randomKM
 }
 
 // fillUp function(5)
-func fillUp() {
+func fillUp(gasCost [10]float64, gasIndex int) ([10]float64, int) {
 	var loop string = "yes"
 
 	for strings.ToLower(loop) == "yes" {
@@ -74,10 +72,9 @@ func fillUp() {
 			priceString = strings.TrimSpace(priceString)
 			priceNumber, _ = strconv.ParseFloat(priceString, 64)
 		}
-		if gasIndex < len(gasCost) {
-			gasCost[gasIndex] = priceNumber
-			gasIndex++
-		}
+
+		gasCost[gasIndex] = priceNumber
+		gasIndex++
 
 		fmt.Print("Add another fill up? (yes/no): ")
 		loop, _ = reader.ReadString('\n')
@@ -89,25 +86,24 @@ func fillUp() {
 			loop = strings.TrimSpace(loop)
 		}
 	}
+	return gasCost, gasIndex
 }
 
 // displayCostToFillUp function(6)
-func displayCostToFillUp() float64 {
+func displayCostToFillUp(gasCost [10]float64, gasIndex int) float64 {
 	var total float64 = 0.0
-	var counting int = 0
 
 	for counter := 0; counter < gasIndex; counter++ {
 		fmt.Println()
 		fmt.Printf("Fill up %d: $%.2f\n", counter+1, gasCost[counter])
 		total += gasCost[counter]
-		counting++
 	}
 
-	if counting == 0 {
+	if gasIndex == 0 {
 		return 0
 	}
 
-	var average float64 = total / float64(counting)
+	var average float64 = total / float64(gasIndex)
 	return average
 }
 
@@ -125,11 +121,12 @@ func main() {
 
 	// print carStats
 	fmt.Println("Initial Car Stats")
-	fmt.Println(carStats())
+	fmt.Println(carStats(carModel, carColor, odometer, oilChangeKM))
 
 	// print drive function
-	fmt.Printf("You drove %.0f km\n", drive())
-	odometer = newMileage
+	var driven float64 = drive()
+	fmt.Printf("You drove %.0f km\n", driven)
+	odometer += driven
 
 	// print oilChange function
 	if oilChange(odometer, oilChangeKM) {
@@ -142,14 +139,14 @@ func main() {
 	carColor = wrapCar()
 
 	// print fillUp function
-	fillUp()
+	gasCost, gasIndex = fillUp(gasCost, gasIndex)
 
 	// print gas costs/average
-	fmt.Printf("\nAverage cost to fill up gas: $%.2f\n", displayCostToFillUp())
+	fmt.Printf("\nAverage cost to fill up gas: $%.2f\n", displayCostToFillUp(gasCost, gasIndex))
 
 	// print updated car stats
 	fmt.Println("\nUpdated Car Stats")
-	fmt.Println(carStats())
+	fmt.Println(carStats(carModel, carColor, odometer, oilChangeKM))
 
 	fmt.Println("\nDone.")
 }
